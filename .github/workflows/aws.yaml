@@ -30,13 +30,20 @@ jobs:
       run:
         shell: bash
         working-directory: ./terraform
+    
     steps:
 
-      - name: Configure AWS CLI
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set region us-east-1  # replace with your region
+      - uses: actions/checkout@v3
+
+      - uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-2
 
       - name: Debug AWS Credentials
         run: |
@@ -44,32 +51,3 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY"
           echo "AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION"
 
-      - name: SCM checkout
-        uses: actions/checkout@v4 # github marketplace, go Actions and serach for pre-defined actions 
-      
-      - name: setup terraform on runners
-        uses: hashicorp/setup-terraform@v3
-        #with:
-         # terraform_version: "1.1.7"
-
-      - name: terraform init
-        id: init
-        run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
-
-      - name: terraform fmt
-        id: fmt
-        run: terraform fmt -check  # will fail the workfolw if fmt incorrect, until return "0" to continue
-
-      - name: terraform validate
-        id: validate
-        run: terraform validate  
-
-      - name: terraform plan
-        id: plan
-        run: terraform plan -no-color -input=false -out planfile
-        continue-on-error: true
-
-      - name: terraform plan
-        if: steps.plan.outcome == 'failure'
-        run: exit 1 # if something goes wrong in the plan, fail the workflow
-      
