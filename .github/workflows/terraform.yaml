@@ -2,8 +2,8 @@ name: "zack gitops workflow for iac"
 on: 
   push: 
     branches:
-      - "main"
-      - "stage"
+      - main
+      - stage
     paths:             # any change in folder "terraform" 
       - terraform/**   # for both stage and main, will trigger workflow
   
