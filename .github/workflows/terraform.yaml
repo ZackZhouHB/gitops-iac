@@ -18,7 +18,7 @@ env:                   # cred for AWS access, terrform is looking for
  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
  BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE }}
   # also can be stored in github var
- AWS_REGION: ap-southeast-2
+ AWS_DEFAULT_REGION: ap-southeast-2
  EKS_CLUSTER: zack-gitops-eks-prod
 
 jobs: 
@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v4 # github marketplace, go Actions and serach for pre-defined actions 
       
       - name: setup terraform on runners
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         #with:
          # terraform_version: "1.1.7"
 
