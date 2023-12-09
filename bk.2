@@ -6,6 +6,6 @@
 
       - name: install Ingress controller
         id: install-Ingress-controller
-        if: step.apply.outcome == 'success' && step.get-kube-config.outcome == 'success'
+        if: steps.apply.outcome == 'success' && step.get-kube-config.outcome == 'success'
         run: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/aws/deploy.yaml
 
