@@ -19,7 +19,7 @@ env:                   # cred for AWS access, terrform is looking for
 
   BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE }}
   # also can be stored in github var
-  #AWS_DEFAULT_REGION: ap-southeast-2
+  AWS_DEFAULT_REGION: ap-southeast-2
   #EKS_CLUSTER: zack-gitops-eks-prod
 
 jobs: 
@@ -31,6 +31,19 @@ jobs:
         shell: bash
         working-directory: ./terraform
     steps:
+
+      - name: Configure AWS CLI
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region us-east-1  # replace with your region
+
+      - name: Debug AWS Credentials
+        run: |
+          echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
+          echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY"
+          echo "AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION"
+
       - name: SCM checkout
         uses: actions/checkout@v4 # github marketplace, go Actions and serach for pre-defined actions 
       
