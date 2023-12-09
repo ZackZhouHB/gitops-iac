@@ -14,9 +14,9 @@ on:
       - terraform/**
 
 env:                   # cred for AWS access, terrform is looking for
-  AWS_ACCESS_KEY_ID: ${{ secret.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secret.AWS_SECRET_ACCESS_KEY }}
-  BUCKET_TF_STATE: ${{ secret.BUCKET_TF_STATE }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE }}
   # also can be stored in github var
   AWS_REGION: ap-southeast-2
   EKS_CLUSTER: zack-gitops-eks-stage
