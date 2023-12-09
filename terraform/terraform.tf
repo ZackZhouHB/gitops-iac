@@ -27,7 +27,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "zack-gitops-iac-stage"
+    bucket = "zack-gitops-iac-prod"
     key    = "terraform.tfstate"
     region = "ap-southeast-2"
   }
