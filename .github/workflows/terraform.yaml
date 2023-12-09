@@ -18,7 +18,7 @@ env:                   # cred for AWS access, terrform is looking for
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE }}
   # also can be stored in github var
-  # AWS_REGION: ap-southeast-2
+  AWS_REGION: ap-southeast-2
   # EKS_CLUSTER: zack-gitops-eks-stage
 
 jobs: 
