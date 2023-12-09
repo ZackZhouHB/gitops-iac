@@ -51,3 +51,28 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY"
           echo "AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION"
 
+      - name: setup terraform on runners
+        uses: hashicorp/setup-terraform@v3
+        #with:
+         # terraform_version: "1.1.7"
+
+      - name: terraform init
+        id: init
+        run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
+
+      - name: terraform fmt
+        id: fmt
+        run: terraform fmt -check  # will fail the workfolw if fmt incorrect, until return "0" to continue
+
+      - name: terraform validate
+        id: validate
+        run: terraform validate  
+
+      - name: terraform plan
+        id: plan
+        run: terraform plan -no-color -input=false -out planfile
+        continue-on-error: true
+
+      - name: terraform plan
+        if: steps.plan.outcome == 'failure'
+        run: exit 1 # if something goes wrong in the plan, fail the workflow
