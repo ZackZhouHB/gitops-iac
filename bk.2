@@ -1,0 +1,11 @@
+
+      - name: configure kube config on runners
+        id: get-kube-config
+        if: step.apply.outcome == 'success' 
+        run: aws eks update-kubeconfig --region ${{ env.AWS_DEFAULT_REGION}} --name ${{ env.EKS_CLUSTER}}
+
+      - name: install Ingress controller
+        id: install-Ingress-controller
+        if: steps.apply.outcome == 'success' && step.get-kube-config.outcome == 'success'
+        run: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/aws/deploy.yaml
+

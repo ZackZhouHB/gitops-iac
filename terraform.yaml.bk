@@ -1,0 +1,63 @@
+name: "zack gitops workflow for iac"
+on: 
+  push: 
+    branches:
+      - main
+      - stage
+    paths:             # any change in folder "terraform" 
+      - terraform/**   # for both stage and main, will trigger workflow
+  
+  pull_request:        # no one can commit to main except approvel needed from main branch owner
+    branches:          # raise pull_request when merge from stage to main
+      - main           # will trigger workflow
+    paths:          
+      - terraform/**
+
+env:                   # cred for AWS access, terrform is looking for      
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE }}
+  # also can be stored in github var
+  AWS_DEFAULT_REGION: ap-southeast-2
+  #EKS_CLUSTER: zack-gitops-eks-prod
+
+jobs: 
+  terraform:   # create a ubuntu container, cd to terraform dir, checkout source code
+    name: "apply iaac code change"
+    runs-on: ubuntu-latest    # from github runners containers 
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
+    steps:
+
+      - name: SCM checkout
+        uses: actions/checkout@v4 # github marketplace, go Actions and serach for pre-defined actions 
+      
+      - name: setup terraform on runners
+        uses: hashicorp/setup-terraform@v3
+        #with:
+         # terraform_version: "1.1.7"
+
+      - name: terraform init
+        id: init
+        run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
+
+      - name: terraform fmt
+        id: fmt
+        run: terraform fmt -check  # will fail the workfolw if fmt incorrect, until return "0" to continue
+
+      - name: terraform validate
+        id: validate
+        run: terraform validate  
+
+      - name: terraform plan
+        id: plan
+        run: terraform plan -no-color -input=false -out planfile
+        continue-on-error: true
+
+      - name: terraform plan
+        if: steps.plan.outcome == 'failure'
+        run: exit 1 # if something goes wrong in the plan, fail the workflow
+      
