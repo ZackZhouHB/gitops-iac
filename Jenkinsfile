@@ -23,12 +23,9 @@ pipeline {
             steps {
                 script {
                     kubernetesDeploy(configs: "zackweb.yaml")
-                   # kubeConfig = readFile("/home/ubuntu/.kube/config") // Path to your kubeconfig file
-                   # kubeConfigContent = kubeConfig.readLines().join('\n')
-                   # withKubeConfig([credentialsId: 'kubeconfig-credentials', kubeconfigContent: kubeConfigContent]) {
-                   #     sh "kubectl apply -f deploy.yaml -n $KUBE_NAMESPACE"
-                    }
-                }
+
+                }  
+             }
             }
         }
     }
